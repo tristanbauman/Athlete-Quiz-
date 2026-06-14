@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>What Type of Athlete Are You?</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0a;color:#f5f5f5;font-family:Arial,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:32px 16px 64px}
+#app{width:100%;max-width:520px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#FFE01B;margin-bottom:8px;text-align:center}
+h1{font-size:clamp(40px,11vw,76px);font-weight:900;font-style:italic;font-family:Georgia,serif;text-transform:uppercase;line-height:.95;text-align:center;margin-bottom:10px}
+h1 span{color:#FFE01B}
+.sub{font-size:13px;color:#666;text-align:center;margin-bottom:32px;line-height:1.6}
+
+.prog-wrap{height:3px;background:#1a1a1a;border-radius:2px;margin-bottom:24px}
+.prog-fill{height:3px;background:#FFE01B;border-radius:2px;transition:width .4s}
+.qnum{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#555;margin-bottom:8px}
+.qtext{font-family:Georgia,serif;font-size:clamp(19px,5vw,28px);font-style:italic;font-weight:700;line-height:1.25;margin-bottom:20px}
+.opts{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.opt{font-size:14px;padding:14px 16px;border-radius:8px;border:1.5px solid #222;background:#141414;color:#f5f5f5;cursor:pointer;text-align:left;line-height:1.4;width:100%;font-family:Arial,sans-serif}
+.opt.sel{border-color:#FFE01B;background:#1a1a00;color:#FFE01B}
+.next{font-family:Georgia,serif;font-style:italic;font-size:20px;font-weight:900;width:100%;padding:15px;border:none;border-radius:8px;cursor:pointer;background:#FFE01B;color:#0a0a0a}
+.next:disabled{background:#1a1a1a;color:#444;cursor:not-allowed}
+
+.loading{text-align:center;padding:80px 20px}
+.ltitle{font-family:Georgia,serif;font-size:46px;font-style:italic;font-weight:900;color:#FFE01B;text-transform:uppercase;line-height:1;margin-bottom:10px}
+.lsub{font-size:13px;color:#555;margin-bottom:30px}
+.spinner{width:44px;height:44px;border:3px solid #222;border-top-color:#FFE01B;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
+
+.rcard{border-radius:12px;overflow:hidden;border:1.5px solid #222}
+.rhead{background:#FFE01B;padding:24px 24px 18px}
+.rlabel{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#555;margin-bottom:5px}
+.rtype{font-family:Georgia,serif;font-size:clamp(24px,7vw,46px);font-style:italic;font-weight:900;color:#0a0a0a;text-transform:uppercase;line-height:.95;margin-bottom:7px}
+.rtagline{font-size:13px;font-weight:600;color:#333;font-style:italic}
+.rbody{background:#141414;padding:24px}
+.rdesc{font-size:14px;line-height:1.7;color:#aaa;margin-bottom:18px}
+.comps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.comp{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:#0a0a0a;border:1.5px solid #222;color:#FFE01B;padding:5px 12px;border-radius:100px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.stat{background:#0a0a0a;border-radius:8px;padding:12px 6px;text-align:center}
+.sval{font-family:Georgia,serif;font-style:italic;font-weight:900;font-size:28px;color:#FFE01B;line-height:1;margin-bottom:4px}
+.slbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#444}
+.divider{border-top:1.5px solid #222;padding-top:20px}
+.slabel{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#444;margin-bottom:10px}
+.srow{display:flex;gap:10px;margin-bottom:10px}
+.sbtn{flex:1;font-size:13px;font-weight:600;padding:11px 10px;border-radius:8px;border:1.5px solid #222;background:#0a0a0a;color:#f5f5f5;cursor:pointer;font-family:Arial,sans-serif}
+.retake{font-family:Georgia,serif;font-style:italic;font-size:20px;font-weight:900;width:100%;padding:14px;border:none;border-radius:8px;background:#FFE01B;color:#0a0a0a;cursor:pointer}
+
+.errbox{background:#1a0000;border:1.5px solid #440000;border-radius:8px;padding:20px;text-align:center;margin-top:40px}
+.errtxt{font-size:14px;color:#ff6b6b;margin-bottom:16px;line-height:1.5}
+.retrybtn{font-family:Georgia,serif;font-style:italic;font-size:18px;font-weight:900;background:#FFE01B;color:#0a0a0a;border:none;border-radius:8px;padding:13px 32px;cursor:pointer}
+.sovbtn{font-size:13px;color:#555;background:none;border:none;cursor:pointer;display:block;margin:14px auto 0}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="quiz">
+  <div class="eyebrow">Sports Personality Quiz</div>
+  <h1>WHAT TYPE OF<br/><span>ATHLETE</span><br/>ARE YOU?</h1>
+  <p class="sub">10 questions. AI reads your competitive DNA.</p>
+  <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+  <div class="qnum" id="qnum">QUESTION 1 OF 10</div>
+  <div class="qtext" id="qtext"></div>
+  <div class="opts" id="opts"></div>
+  <button class="next" id="nextbtn" disabled onclick="nextQ()">Next →</button>
+</div>
+
+<div id="loading" class="loading hidden">
+  <div class="ltitle">ANALYZING<br/>YOUR DNA</div>
+  <div class="lsub">Running the numbers on your athlete profile...</div>
+  <div class="spinner"></div>
+</div>
+
+<div id="errscreen" class="hidden">
+  <div class="errbox">
+    <div class="errtxt">The AI hit a snag. Your answers are saved.</div>
+    <button class="retrybtn" onclick="retry()">Retry →</button>
+  </div>
+  <button class="sovbtn" onclick="startOver()">Start over</button>
+</div>
+
+<div id="result" class="hidden">
+  <div class="rcard">
+    <div class="rhead">
+      <div class="rlabel">Your Athlete Type</div>
+      <div class="rtype" id="rtype"></div>
+      <div class="rtagline" id="rtagline"></div>
+    </div>
+    <div class="rbody">
+      <p class="rdesc" id="rdesc"></p>
+      <div class="comps" id="rcomps"></div>
+      <div class="stats" id="rstats"></div>
+      <div class="divider">
+        <div class="slabel">Share your result</div>
+        <div class="srow">
+          <button class="sbtn" id="copybtn" onclick="copyRes()">📋 Copy Result</button>
+          <button class="sbtn" onclick="shareX()">𝕏 Post to X</button>
+        </div>
+        <button class="retake" onclick="startOver()">Retake the Quiz →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+var QS=[
+  {q:"Your team is down by one with 2 minutes left. What's your move?",o:["Take over — I want the ball in my hands","Set up my teammate for the best shot","Stay disciplined, trust the system","Read the defense and improvise"]},
+  {q:"How do you prepare the night before a big game?",o:["Visualize every play obsessively","Chill out — anxiety kills performance","Watch film and study the opponent","Trust my routine and go to bed early"]},
+  {q:"A referee makes a terrible call against you. You...",o:["Lose it — injustice fires me up","Use the anger as fuel silently","Shake it off immediately","Argue calmly and move on"]},
+  {q:"What role do you naturally play in a group?",o:["The one who leads by example","The loudest voice in the huddle","The one who keeps everyone calm","The one who has a plan for everything"]},
+  {q:"You've been in a slump for 3 weeks. What do you do?",o:["Outwork it — more reps, more hours","Step back and reset mentally","Break it down and find the flaw","Lean on my teammates to pull me through"]},
+  {q:"What does winning feel like to you?",o:["Pure relief — I hate losing more than I love winning","A rush I chase every single day","Proof that the process worked","Best when it's shared with the team"]},
+  {q:"Pick your natural environment:",o:["One-on-one competition, no excuses","The controlled chaos of a team sport","Individual sport with pure statistics","High-stakes moments with a crowd"]},
+  {q:"Your biggest athletic weakness is probably...",o:["Patience — I want it NOW","Getting out of my own head","Playing it too safe in big moments","Relying too much on others"]},
+  {q:"What motivates you most?",o:["Proving people wrong","Being the best to ever do it","Leaving a legacy","The love of competition itself"]},
+  {q:"How do you react after a bad loss?",o:["Can't sleep — I replay every mistake","Channel it into the next session immediately","Process it, then let it go","Talk it through with my team"]}
+];
+var FB=[
+  {type:"THE SILENT ASSASSIN",tagline:"Calm until it's time to not be calm.",description:"You don't talk — you perform. When the moment gets biggest, you get quietest. Opponents underestimate you right up until you end them.",comps:["Kawhi Leonard","Barry Sanders","Henrik Lundqvist"],stats:[{label:"MENTAL EDGE",value:"96%"},{label:"CLUTCH FACTOR",value:"94%"},{label:"GRIND MODE",value:"88%"}]},
+  {type:"THE IRON COMPETITOR",tagline:"Second place is just first loser.",description:"You're allergic to losing. Every rep matters, every drill has stakes. People think you're intense — you think they're not intense enough.",comps:["Kobe Bryant","Tom Brady","Sidney Crosby"],stats:[{label:"MENTAL EDGE",value:"91%"},{label:"CLUTCH FACTOR",value:"89%"},{label:"GRIND MODE",value:"99%"}]},
+  {type:"THE FIELD GENERAL",tagline:"You win before the game even starts.",description:"You study, prepare, and outthink opponents before they've laced up. Teams with you don't just win — they execute at a level others can't match.",comps:["Peyton Manning","Wayne Gretzky","Tiger Woods"],stats:[{label:"MENTAL EDGE",value:"98%"},{label:"CLUTCH FACTOR",value:"85%"},{label:"GRIND MODE",value:"90%"}]}
+];
+var cq=0,ans=[],sel=null,pend=null,tries=0,res=null;
+
+function show(id){['quiz','loading','errscreen','result'].forEach(function(s){document.getElementById(s).classList.add('hidden')});document.getElementById(id).classList.remove('hidden')}
+
+function renderQ(){
+  var q=QS[cq];
+  document.getElementById('prog').style.width=(cq/QS.length*100)+'%';
+  document.getElementById('qnum').textContent='QUESTION '+(cq+1)+' OF '+QS.length;
+  document.getElementById('qtext').textContent=q.q;
+  var c=document.getElementById('opts');c.innerHTML='';sel=null;
+  document.getElementById('nextbtn').disabled=true;
+  document.getElementById('nextbtn').textContent=cq+1===QS.length?'Get My Result →':'Next →';
+  q.o.forEach(function(o,i){
+    var b=document.createElement('button');b.className='opt';b.textContent=o;
+    b.onclick=function(){document.querySelectorAll('.opt').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel');sel=i;document.getElementById('nextbtn').disabled=false};
+    c.appendChild(b);
+  });
+}
+
+function nextQ(){
+  if(sel===null)return;
+  ans.push({q:QS[cq].q,a:QS[cq].o[sel]});cq++;
+  if(cq>=QS.length){pend=ans.slice();tries=0;show('loading');go(pend,0)}
+  else{renderQ()}
+}
+
+function go(a,t){
+  if(t>=2){done(FB[Math.floor(Math.random()*FB.length)]);return}
+  var s=a.map(function(x,i){return 'Q'+(i+1)+': '+x.q+' → '+x.a}).join('\n');
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,messages:[{role:'user',content:'Return ONLY a raw JSON object, no markdown, no backticks, nothing else.\n\nQuiz answers:\n'+s+'\n\nJSON format:\n{"type":"THE [ARCHETYPE]","tagline":"tagline under 10 words","description":"2-3 bold sentences about their athlete personality","comps":["Athlete 1","Athlete 2","Athlete 3"],"stats":[{"label":"MENTAL EDGE","value":"88%"},{"label":"CLUTCH FACTOR","value":"92%"},{"label":"GRIND MODE","value":"95%"}]}'}]})
+  })
+  .then(function(r){return r.json()})
+  .then(function(d){
+    var txt='';
+    (d.content||[]).forEach(function(b){if(b.type==='text')txt+=b.text});
+    var m=txt.match(/\{[\s\S]*\}/);
+    if(!m)throw 0;
+    var p=JSON.parse(m[0]);
+    if(!p.type||!p.comps||!p.stats)throw 0;
+    done(p);
+  })
+  .catch(function(){tries++;if(tries>=2){done(FB[Math.floor(Math.random()*FB.length)])}else{show('errscreen')}});
+}
+
+function done(r){
+  res=r;
+  document.getElementById('rtype').textContent=r.type;
+  document.getElementById('rtagline').textContent='"'+r.tagline+'"';
+  document.getElementById('rdesc').textContent=r.description;
+  var rc=document.getElementById('rcomps');rc.innerHTML='';
+  r.comps.forEach(function(c){var s=document.createElement('span');s.className='comp';s.textContent=c;rc.appendChild(s)});
+  var rs=document.getElementById('rstats');rs.innerHTML='';
+  r.stats.forEach(function(s){rs.innerHTML+='<div class="stat"><div class="sval">'+s.value+'</div><div class="slbl">'+s.label+'</div></div>'});
+  show('result');
+}
+
+function retry(){show('loading');go(pend,tries)}
+function startOver(){cq=0;ans=[];sel=null;pend=null;tries=0;res=null;renderQ();show('quiz')}
+function copyRes(){
+  if(!res)return;
+  navigator.clipboard.writeText('🏆 My athlete type: '+res.type+'\n"'+res.tagline+'"\n\n'+res.description+'\n\nComps: '+res.comps.join(', ')+'\n\nWhat type of athlete are you?');
+  var b=document.getElementById('copybtn');b.textContent='✅ Copied!';setTimeout(function(){b.textContent='📋 Copy Result'},2000);
+}
+function shareX(){if(!res)return;window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('🏆 My athlete type: '+res.type+'\n"'+res.tagline+'"\n\nWhat type of athlete are you?'),'_blank')}
+
+renderQ();
+</script>
+</body>
+</html>
